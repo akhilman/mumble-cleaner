@@ -95,6 +95,37 @@ def remove_orphaned_channels(server):
             all_done = False  # Repeat again
 
 
+def reset_channel_position(server):
+    logger = logging.getLogger("mumble_cleaner")
+    parents = set()
+    for channel_id, channel in server.getChannels().items():
+        acl, groups, inherit = server.getACL(channel_id)
+        for group in groups:
+            if group.inherited:
+                continue
+            if group.name != "no_position_for_children":
+                continue
+            logger.info(
+                "Channel #%i %s restricts positions for children",
+                channel_id,
+                channel.name,
+            )
+            parents.add(channel_id)
+            break
+    for channel_id, channel in server.getChannels().items():
+        if channel.parent not in parents:
+            continue
+        if channel.position == 0:
+            continue
+        logger.info(
+            "Resetting position for channel #%i %s",
+            channel_id,
+            channel.name,
+        )
+        channel.position = 0
+        server.setChannelState(channel)
+
+
 def main():
     logger = logging.getLogger("mumble_cleaner")
     with Ice.initialize(sys.argv) as communicator:
@@ -119,6 +150,7 @@ def main():
                 remove_bad_user_names(current_server)
                 remove_inactive_users(current_server)
                 remove_orphaned_channels(current_server)
+                reset_channel_position(current_server)
 
 
 if __name__ == "__main__":
