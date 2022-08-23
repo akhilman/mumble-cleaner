@@ -77,6 +77,8 @@ def remove_orphaned_channels(server):
         for channel_id, channel in server.getChannels().items():
             if channel_id == 0:
                 continue  # skip root channel
+            if channel.temporary:
+                continue  # skip temporary channels
             if channel_id in channels_with_children:
                 continue  # skip channels with childrens
             acl, groups, inherit = server.getACL(channel_id)
