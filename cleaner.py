@@ -82,7 +82,6 @@ def remove_orphaned_channels(server):
             if channel_id in channels_with_children:
                 continue  # skip channels with childrens
             acl, groups, inherit = server.getACL(channel_id)
-            # group_map = { grup.name: group for group in groups }
             added = set()
             for group in groups:
                 added.update(set(group.add))
