@@ -9,6 +9,7 @@ import Murmur
 INACTIVE_DAYS = 365
 BAD_NAMES_DAYS = 1
 BAD_NANES = [
+    "Mumla_User",
     "Plumble_User",
 ]
 
