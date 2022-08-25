@@ -102,8 +102,6 @@ def reset_channel_position(server):
     for channel_id, channel in server.getChannels().items():
         acl, groups, inherit = server.getACL(channel_id)
         for group in groups:
-            if group.inherited:
-                continue
             if group.name != "no_position_for_children":
                 continue
             logger.info(
