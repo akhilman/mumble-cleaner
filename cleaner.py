@@ -85,7 +85,10 @@ def remove_orphaned_channels(server):
             acl, groups, inherit = server.getACL(channel_id)
             added = set()
             for group in groups:
-                added.update(set(group.add))
+                # Count only administrators
+                if group.name == "admin":
+                    added.update(set(group.add))
+                    break
             if added:
                 continue  # Channel has added users in groups
             logger.info(
