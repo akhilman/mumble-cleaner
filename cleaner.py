@@ -4,7 +4,7 @@ import sys
 
 import Ice
 
-import Murmur
+import MumbleServer
 
 INACTIVE_DAYS = 365
 BAD_NAMES_DAYS = 1
@@ -18,10 +18,10 @@ def remove_bad_user_names(server):
     logger = logging.getLogger("mumble_cleaner")
     for user_id in server.getRegisteredUsers(""):
         user_info = server.getRegistration(user_id)
-        user_name = user_info.get(Murmur.UserInfo.UserName)
+        user_name = user_info.get(MumbleServer.UserInfo.UserName)
         if user_name not in BAD_NANES:
             continue  # Skip good names
-        last_activity = user_info.get(Murmur.UserInfo.UserLastActive)
+        last_activity = user_info.get(MumbleServer.UserInfo.UserLastActive)
         if last_activity:
             last_activity = datetime.datetime.strptime(
                 last_activity, "%Y-%m-%d %H:%M:%S"
@@ -43,10 +43,10 @@ def remove_inactive_users(server):
     logger = logging.getLogger("mumble_cleaner")
     for user_id in server.getRegisteredUsers(""):
         user_info = server.getRegistration(user_id)
-        user_name = user_info.get(Murmur.UserInfo.UserName)
+        user_name = user_info.get(MumbleServer.UserInfo.UserName)
         if user_name == "SuperUser":
             continue  # Skip super user
-        last_activity = user_info.get(Murmur.UserInfo.UserLastActive)
+        last_activity = user_info.get(MumbleServer.UserInfo.UserLastActive)
         if last_activity:
             last_activity = datetime.datetime.strptime(
                 last_activity, "%Y-%m-%d %H:%M:%S"
@@ -133,7 +133,7 @@ def main():
     with Ice.initialize(sys.argv) as communicator:
         base = communicator.stringToProxy("Meta:tcp -h 127.0.0.1 -p 6502")
 
-        meta = Murmur.MetaPrx.checkedCast(base)
+        meta = MumbleServer.MetaPrx.checkedCast(base)
         if not meta:
             raise RuntimeError("Invalid proxy")
 
